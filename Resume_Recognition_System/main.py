@@ -18,15 +18,6 @@ from reportlab.lib.colors import green, red, black, HexColor
 from dotenv import load_dotenv
 from groq import Groq
 
-# -------------------------------------
-# Streamlit Page Configuration
-# -------------------------------------
-st.set_page_config(
-    page_title="Resume Recognition System",
-    page_icon="📄",
-    layout="wide"
-)
-
 
 # Only import pdf2image and pytesseract if dependencies are available
 try:
@@ -73,6 +64,15 @@ if USE_PDF2IMAGE:
     except ImportError:
         st.warning("⚠️ pdf2image not installed, OCR functionality disabled.")
         USE_PDF2IMAGE = False
+
+# -------------------------------------
+# Streamlit Page Configuration
+# -------------------------------------
+st.set_page_config(
+    page_title="Resume Recognition System",
+    page_icon="📄",
+    layout="wide"
+)
 
 # -------------------------------------
 # Custom CSS for Enhanced UI
@@ -186,79 +186,43 @@ initialize_session_state()
 # -------------------------------------
 # Load API Key and Test Connection
 # -------------------------------------
-# 1️⃣ Load local .env (for local development)
 load_dotenv()
-
-# 2️⃣ Fetch API key from Streamlit secrets first, fallback to .env
-groq_api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
-
-# 3️⃣ Warn if missing
+groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:
-    st.error("❌ Missing Groq API key!")
-    st.info("💡 Add your API key in Streamlit secrets (recommended) or create a .env file with:")
-    st.code("GROQ_API_KEY=your_api_key_here")
+    st.error("❌ Missing Groq API key in .env file")
+    st.info("💡 Create a .env file with: GROQ_API_KEY=your_api_key_here")
     st.info("🔗 Get your free API key from: https://console.groq.com/keys")
 
-# 4️⃣ API call function
-# -----------------------------
-# Groq API Call - Safe Version
-# -----------------------------
-def call_groq_api(prompt, model="llama-3.1-8b-instant", max_tokens=3000, debug=False):
-    """
-    Sends a prompt to Groq API and safely retrieves the text response.
-    Returns string or error message.
-    """
-    # Get API key
-    api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
-    if not api_key:
-        return "⚠ Missing Groq API key. Check .env or Streamlit secrets."
-
-    url = "https://api.groq.com/openai/v1/responses"
+def call_groq_api(api_key, model, messages, max_tokens=10):
+    url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    payload = {
+    data = {
         "model": model,
-        "input": prompt,
-        "max_output_tokens": max_tokens
+        "messages": messages,
+        "max_tokens": max_tokens
     }
+    response = requests.post(url, headers=headers, json=data)
+    return response.json()
 
-    try:
-        response = requests.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        response_json = response.json()
-
-        if debug:
-            st.json(response_json)  # Show raw response for debugging
-
-        # Safely navigate nested response
-        choices = response_json.get("choices", [])
-        if len(choices) == 0:
-            return "⚠ Groq API returned no choices."
-        choice = choices[0]
-        message_content = choice.get("message", {}).get("content", "")
-        if not message_content:
-            return "⚠ Groq API returned empty content."
-
-        return message_content.strip()
-
-    except requests.exceptions.RequestException as e:
-        return f"Request failed: {e}"
-    except Exception as e:
-        return f"Unexpected error: {e}"
-
-# 5️⃣ Test API connection once per session
 if groq_api_key and "api_tested" not in st.session_state:
-    response = call_groq_api("Hello", model="llama-3.1-8b-instant", max_tokens=10, debug=True)
-    if not response.startswith("⚠") and not response.startswith("Request failed"):
+    try:
+        response = call_groq_api(
+            api_key=groq_api_key,
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": "Hello"}],
+            max_tokens=10
+        )
         st.session_state.api_tested = True
         st.session_state.api_working = True
         st.success("✅ API connection successful!")
-    else:
+    except Exception as e:
         st.session_state.api_tested = True
         st.session_state.api_working = False
-        st.warning(f"⚠ API connection issue: {response}")
+        st.warning(f"⚠ API connection issue: {str(e)}")
+        st.info("💡 Please check your API key and try again")
 
 # -------------------------------------
 # Helper Functions
@@ -294,24 +258,49 @@ def provide_manual_analysis_tips() -> dict:
         """
     }
 
-def analyze_resume_with_llm(prompt: str, max_retries: int = 3, debug=False) -> str:
-    """
-    Performs resume analysis via Groq API with retries and safe handling.
-    Returns analysis text or fallback notice.
-    """
-    if not (st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")):
+def analyze_resume_with_llm(prompt: str, max_retries: int = 3) -> str:
+    if not groq_api_key:
         return "⚠ No Groq API key found. Please check your .env file."
+    if st.session_state.get('api_tested', False) and not st.session_state.get('api_working', True):
+        st.warning("🔄 API connection issues detected. Showing manual analysis guidelines.")
+        return "API temporarily unavailable. Please refer to manual analysis guidelines below."
 
     for attempt in range(max_retries):
-        result = call_groq_api(prompt, max_tokens=1000, debug=debug)
-        if not result.startswith("⚠") and not result.startswith("Request failed"):
-            return result  # Successful response
-        else:
-            st.warning(f"Attempt {attempt+1} failed: {result}")
+        try:
+            response = call_groq_api(
+                api_key=groq_api_key,
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {"role": "system", "content": """
+                    You are a professional resume analyzer and career counselor.
+                    Provide detailed, actionable feedback. Use clear formatting with bullet points.
+                    For strengths, start bullet points with [STRENGTH].
+                    For weaknesses, start bullet points with [WEAKNESS].
+                    Be specific and provide concrete examples.
+                    """},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=1000
+            )
+            if response and "choices" in response:
+                result = response["choices"][0]["message"]["content"]
+                if result and len(result.strip()) > 10:
+                    return result.strip()
+        except Exception as e:
+            error_msg = str(e)
+            st.session_state._last_groq_error = f"Attempt {attempt+1}: {error_msg}"
             if attempt < max_retries - 1:
-                st.info(f"Retrying ({attempt+2}/{max_retries})...")
-
-    st.error("❌ All retries failed. Showing manual analysis guidelines.")
+                st.info(f"Retrying analysis (attempt {attempt + 2}/{max_retries})...")
+                continue
+            else:
+                st.error(f"❌ Analysis failed: {st.session_state._last_groq_error}")
+                st.info("💡 This could be due to:")
+                st.info("• API rate limits - please wait a few minutes and try again")
+                st.info("• Network connectivity issues")
+                st.info("• Invalid API key - check your .env file")
+                st.info("• Model availability issues")
+                st.warning("🔄 Switching to manual analysis guidelines...")
+                return "API_FAILED"
     return "API_FAILED"
 
 def process_pdf(uploaded_file) -> tuple[str, list]:
@@ -887,7 +876,14 @@ elif st.session_state.active_page == "Help":
         • <strong>Complete Analysis:</strong> Full comprehensive review
         </div>
         <div class='info-box'>
-        <strong>Step 4: Ask Follow-up Questions</strong><br>
+        <strong>Step 4: Review Results</strong><br>
+        • Results automatically open when analysis starts<br>
+        • Green checkmarks (✓) show strengths<br>
+        • Red X marks (✗) show areas for improvement<br>
+        • Download PDF reports for your records
+        </div>
+        <div class='info-box'>
+        <strong>Step 5: Ask Follow-up Questions</strong><br>
         • Use "Your AI Assistant" for specific questions<br>
         • Get personalized advice about your resume<br>
         • Ask for clarifications or additional tips
@@ -915,7 +911,7 @@ elif st.session_state.active_page == "Help":
         - Skills alignment with job requirements
         - Experience relevance and presentation
         - Overall professional impression
-        """, unsafe_allow_html=True)
+        """)
 
     with tab3:
         st.markdown("""
@@ -960,7 +956,7 @@ elif st.session_state.active_page == "Help":
         A: Use the AI Assistant to ask for clarifications or different perspectives on specific points.
         Q: Can I analyze multiple resumes?
         A: You can upload different resumes in the same session, but each upload will replace the previous one.
-        """, unsafe_allow_html=True)
+        """)
 
 # -------------------------------------
 # Footer
@@ -971,6 +967,3 @@ st.markdown("""
 <small>🤖 Powered by AI • Built with Streamlit • Resume Recognition System v2.0</small>
 </div>
 """, unsafe_allow_html=True)
-
-
-
