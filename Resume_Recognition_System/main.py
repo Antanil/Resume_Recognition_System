@@ -195,7 +195,7 @@ if not groq_api_key:
     st.info("💡 Create a .env file with: GROQ_API_KEY=your_api_key_here")
     st.info("🔗 Get your free API key from: https://console.groq.com/keys")
 
-def call_groq_api(api_key, model, messages, max_tokens=10):
+def call_groq_api(api_key, model, messages, max_tokens=1000):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -969,4 +969,5 @@ st.markdown("""
 <small>🤖 Powered by AI • Built with Streamlit • Resume Recognition System v2.0</small>
 </div>
 """, unsafe_allow_html=True)
+
 
