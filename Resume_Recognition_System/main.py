@@ -18,6 +18,15 @@ from reportlab.lib.colors import green, red, black, HexColor
 from dotenv import load_dotenv
 from groq import Groq
 
+# -------------------------------------
+# Streamlit Page Configuration
+# -------------------------------------
+st.set_page_config(
+    page_title="Resume Recognition System",
+    page_icon="📄",
+    layout="wide"
+)
+
 
 # Only import pdf2image and pytesseract if dependencies are available
 try:
@@ -64,15 +73,6 @@ if USE_PDF2IMAGE:
     except ImportError:
         st.warning("⚠️ pdf2image not installed, OCR functionality disabled.")
         USE_PDF2IMAGE = False
-
-# -------------------------------------
-# Streamlit Page Configuration
-# -------------------------------------
-st.set_page_config(
-    page_title="Resume Recognition System",
-    page_icon="📄",
-    layout="wide"
-)
 
 # -------------------------------------
 # Custom CSS for Enhanced UI
@@ -967,3 +967,4 @@ st.markdown("""
 <small>🤖 Powered by AI • Built with Streamlit • Resume Recognition System v2.0</small>
 </div>
 """, unsafe_allow_html=True)
+
