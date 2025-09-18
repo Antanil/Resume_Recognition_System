@@ -852,43 +852,37 @@ elif st.session_state.active_page == "Help":
     st.title("📚 User Guide")
     tab1, tab2, tab3, tab4 = st.tabs(["🚀 Getting Started", "🔧 Features", "💡 Tips", "❓ FAQ"])
 
-    with tab1:
-        st.markdown("""
-        ### How to Use the Resume Recognition System
-        <div class='info-box'>
-        <strong>Step 1: Upload Your Resume</strong><br>
-        • Go to "Upload & Analyze" page<br>
-        • Choose a PDF file of your resume<br>
-        • Wait for text extraction to complete
-        </div>
-        <div class='info-box'>
-        <strong>Step 2: Add Job Description</strong><br>
-        • Paste the job posting you're interested in<br>
-        • Include requirements, responsibilities, and qualifications<br>
-        • The more detailed, the better the analysis
-        </div>
-        <div class='info-box'>
-        <strong>Step 3: Choose Analysis Type</strong><br>
-        • <strong>Quick Overview:</strong> Fast summary of key points<br>
-        • <strong>Issues Analysis:</strong> Identify problems and gaps<br>
-        • <strong>Enhancement Tips:</strong> Get improvement suggestions<br>
-        • <strong>Job Matching:</strong> See how well you match the job<br>
-        • <strong>Complete Analysis:</strong> Full comprehensive review
-        </div>
-        <div class='info-box'>
-        <strong>Step 4: Review Results</strong><br>
-        • Results automatically open when analysis starts<br>
-        • Green checkmarks (✓) show strengths<br>
-        • Red X marks (✗) show areas for improvement<br>
-        • Download PDF reports for your records
-        </div>
-        <div class='info-box'>
-        <strong>Step 5: Ask Follow-up Questions</strong><br>
-        • Use "Your AI Assistant" for specific questions<br>
-        • Get personalized advice about your resume<br>
-        • Ask for clarifications or additional tips
-        </div>
-        """, unsafe_allow_html=True)
+   with tab1:
+    st.markdown("""
+    ### How to Use the Resume Recognition System
+    <div class='info-box'>
+    <strong>Step 1: Upload Your Resume</strong><br>
+    • Go to "Upload & Analyze" page<br>
+    • Choose a PDF file of your resume<br>
+    • Wait for text extraction to complete
+    </div>
+    <div class='info-box'>
+    <strong>Step 2: Add Job Description</strong><br>
+    • Paste the job posting you're interested in<br>
+    • Include requirements, responsibilities, and qualifications<br>
+    • The more detailed, the better the analysis
+    </div>
+    <div class='info-box'>
+    <strong>Step 3: Choose Analysis Type</strong><br>
+    • <strong>Quick Overview:</strong> Fast summary of key points<br>
+    • <strong>Issues Analysis:</strong> Identify problems and gaps<br>
+    • <strong>Enhancement Tips:</strong> Get improvement suggestions<br>
+    • <strong>Job Matching:</strong> See how well you match the job<br>
+    • <strong>Complete Analysis:</strong> Full comprehensive review
+    </div>
+    <div class='info-box'>
+    <strong>Step 4: Ask Follow-up Questions</strong><br>
+    • Use "Your AI Assistant" for specific questions<br>
+    • Get personalized advice about your resume<br>
+    • Ask for clarifications or additional tips
+    </div>
+    """, unsafe_allow_html=True)
+
 
     with tab2:
         st.markdown("""
@@ -967,4 +961,5 @@ st.markdown("""
 <small>🤖 Powered by AI • Built with Streamlit • Resume Recognition System v2.0</small>
 </div>
 """, unsafe_allow_html=True)
+
 
