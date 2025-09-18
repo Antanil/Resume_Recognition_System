@@ -55,9 +55,6 @@ HAS_TESSERACT = TESSERACT_CMD and shutil.which(TESSERACT_CMD)
 # Decide whether to use pdf2image + pytesseract
 USE_PDF2IMAGE = HAS_POPPLER and HAS_TESSERACT
 
-if not USE_PDF2IMAGE:
-    st.warning("⚠️ Poppler and/or Tesseract not found – using text-only fallback (pdfplumber)")
-
 # Configure pytesseract if available
 if HAS_TESSERACT:
     try:
@@ -219,7 +216,7 @@ if groq_api_key and "api_tested" not in st.session_state:
         )
         st.session_state.api_tested = True
         st.session_state.api_working = True
-        st.success("✅ API connection successful!")
+      
     except Exception as e:
         st.session_state.api_tested = True
         st.session_state.api_working = False
@@ -963,6 +960,7 @@ st.markdown("""
 <small>🤖 Powered by AI • Built with Streamlit • Resume Recognition System v2.0</small>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
