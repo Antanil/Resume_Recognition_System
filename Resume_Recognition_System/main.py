@@ -878,14 +878,7 @@ elif st.session_state.active_page == "Help":
         • <strong>Complete Analysis:</strong> Full comprehensive review
         </div>
         <div class='info-box'>
-        <strong>Step 4: Review Results</strong><br>
-        • Results automatically open when analysis starts<br>
-        • Green checkmarks (✓) show strengths<br>
-        • Red X marks (✗) show areas for improvement<br>
-        • Download PDF reports for your records
-        </div>
-        <div class='info-box'>
-        <strong>Step 5: Ask Follow-up Questions</strong><br>
+        <strong>Step 4: Ask Follow-up Questions</strong><br>
         • Use "Your AI Assistant" for specific questions<br>
         • Get personalized advice about your resume<br>
         • Ask for clarifications or additional tips
@@ -960,6 +953,7 @@ elif st.session_state.active_page == "Help":
         A: You can upload different resumes in the same session, but each upload will replace the previous one.
         """)
 
+
 # -------------------------------------
 # Footer
 # -------------------------------------
@@ -969,5 +963,6 @@ st.markdown("""
 <small>🤖 Powered by AI • Built with Streamlit • Resume Recognition System v2.0</small>
 </div>
 """, unsafe_allow_html=True)
+
 
 
