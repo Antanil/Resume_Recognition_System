@@ -1,3 +1,8 @@
+To check this streamlit based app out for yourself click on the link below:
+https://resumerecognitionsystem-kj3vmcnppdjxmxcvja7aue.streamlit.app/
+
+(***Also the chatbot probably won't work because I ran out of tokens :P)
+
 📄 Resume Recognition System Overview: The Resume Recognition System is a Streamlit-based application that extracts text and images from resumes (PDF) and provides an AI-powered chatbot (via the Groq API) to analyze and answer questions about the parsed data. It is built in Python 3.10 and uses OCR (pytesseract) to extract text from PDF pages converted to images. This system helps recruiters and HR teams convert unstructured resumes into structured, searchable data.
 
 ✨ Features -Upload resume files (PDF) -Extract embedded profile images and text using OCR -AI chatbot powered by Groq API to understand the resume -Displays parsed fields: name, email, phone, education, skills, experience -Optionally export results to PDF (reportlab)
@@ -22,5 +27,6 @@ venv\Scripts\activate
 
 macOS/Linux
 source venv/bin/activate
+
 
 Then install dependencies: pip install -r requirements.txt
