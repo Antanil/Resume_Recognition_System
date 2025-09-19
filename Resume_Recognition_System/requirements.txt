@@ -1,9 +1,10 @@
-streamlit==1.28.0
-python-dotenv==1.0.0
-pdf2image==1.16.3
-pytesseract==0.3.10
-Pillow==10.0.0
-reportlab==4.0.4
-groq==0.31.1
-pdfplumber==0.11.7
+streamlit
+python-dotenv
+pdf2image
+pytesseract
+Pillow
+reportlab
+groq
+pdfplumber
+
 
